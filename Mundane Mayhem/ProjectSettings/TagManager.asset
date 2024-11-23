@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 3
   tags:
   - hurt
+  - interact
   layers:
   - Default
   - TransparentFX
@@ -12,7 +13,7 @@ TagManager:
   - 
   - Water
   - UI
-  - 
+  - render in front test
   - 
   - 
   - 
@@ -51,3 +52,4 @@ TagManager:
   - Light Layer 5
   - Light Layer 6
   - Light Layer 7
+  - render in front
