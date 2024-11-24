@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Linq;
 using System.Threading;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -19,10 +20,14 @@ public class interaction_code : MonoBehaviour
     public bool freeze_player = false;
     private GameObject player;
     private bool original = true;
+    
 
-    public enum item_type { none, soda,ciggy, wonster, notpi,chipchip,chipblue};
+    public enum item_type { none, soda,ciggy, soda_wonster, soda_notpee,chip_chipchip,chip_blue, candy, slushee, soda_ahhhh,soda_beer,candy_red,candy_green,coffee,burger};
     public item_type item_now;
     public int order;
+
+
+    
 
 
 
@@ -38,6 +43,10 @@ public class interaction_code : MonoBehaviour
         switch (act_now)
         {
             case act_type.quest:
+                transform.GetChild(1).gameObject.transform.position -= Vector3.up*2;
+                transform.GetChild(0).gameObject.GetComponent<Renderer>().enabled = (true);   //get normal
+                transform.GetChild(1).gameObject.GetComponent<Renderer>().enabled = (false); //hide mad
+
                 player.GetComponent<player_code>().customers.Add(gameObject);
                 StartCoroutine(player.GetComponent<player_code>().customerShuffle());
                 break;
@@ -96,14 +105,29 @@ public class interaction_code : MonoBehaviour
                 if (player.GetComponent<player_code>().equipment!=null)//quest check
                 {
                     if (player.GetComponent<player_code>().equipment.GetComponent<interaction_code>().item_now == item_now) //task complete
-                    { 
-                        transform.position += Vector3.up;
+                    {
+                        //clear hand
+                        Destroy(player.GetComponent<player_code>().equipment);
+                        player.GetComponent<player_code>().equipment=null;
+                        player.GetComponent<player_code>().equip_now=player_code.equip_type.none;
+                        //satisfy
                         codeObj.global_words = new string[] { my_response[0] };
                         player.GetComponent<player_code>().customers.Remove(gameObject);
                         StartCoroutine(player.GetComponent<player_code>().customerShuffle()); //shuffle players
+                        order = -1000;
                     } 
                     else
-                    { codeObj.global_words = new string[] { my_response[1] }; StartCoroutine(player.GetComponent<player_code>().hurt()); } //fail task
+                    { codeObj.global_words = new string[] //fail task
+                    {
+                        my_response[1] }; 
+                        StartCoroutine(player.GetComponent<player_code>().hurt());
+                        transform.GetChild(0).gameObject.GetComponent<Renderer>().enabled = (false); //hide normal
+                        transform.GetChild(1).gameObject.GetComponent<Renderer>().enabled = (true);  //get mad
+                        yield return new WaitForSeconds(1.5f);
+                        transform.GetChild(0).gameObject.GetComponent<Renderer>().enabled = (true);   //get normal
+                        transform.GetChild(1).gameObject.GetComponent<Renderer>().enabled = (false); //hide mad
+
+                    }
                 }
                 else
                     {codeObj.global_words = my_words;}
