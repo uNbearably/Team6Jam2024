@@ -105,7 +105,7 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -154,10 +154,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   act_now: 3
   my_words:
-  - bring me a ciggy
-  - 'IDK '
+  - chip chips taste like bandages...
+  - and i can't seem to eat enough of either!
+  - bring me whichever you have.
+  my_response:
+  - correct
+  - incorrect
   freeze_player: 1
-  quest_item: 
+  item_now: 5
+  order: 0
 --- !u!1 &3480525927927618601
 GameObject:
   m_ObjectHideFlags: 0

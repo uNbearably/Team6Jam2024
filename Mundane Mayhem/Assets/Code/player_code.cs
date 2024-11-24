@@ -1,6 +1,8 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic;
+using System.Threading;
 //using UnityEngine.UIElements;
 
 public class player_code : MonoBehaviour
@@ -37,11 +39,12 @@ public class player_code : MonoBehaviour
     public equip_type equip_now;
     public GameObject equipment;
 
-    public GameObject[] customers;
+    public List<GameObject> customers;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        go_pos=transform.position;
         start_pos=transform.position;
         //rb = gameObject.GetComponent<Rigidbody>();
         //cam_target = GameObject.Find("cam_target");
@@ -187,14 +190,24 @@ public class player_code : MonoBehaviour
         health_now -= 1;
         healthbar.value=health_now;
         GameObject.Find("HealthFill").GetComponent<Image>().color=new Color(1-health_now/health_max, -1 + health_now / health_max,.2f);
+//death
         if (health_now <= 0)
         {
+            transform.rotation = Quaternion.Euler(0, 90, 0);
+            while (!Input.GetButton("Fire1")) { yield return new WaitForEndOfFrame(); }
+
+
+            GameObject.Find("spawner").GetComponent<spawner_code>().spawn_timer = 5;
+            GameObject.Find("spawner").GetComponent<spawner_code>().intensity = 0;
             transform.position = start_pos;
             transform.rotation = Quaternion.Euler(0,0,0);
             speed_now *= 0;
             grav_now *= 0;
             additional_force *= 0;
             health_now = health_max;
+            //reset healthbar
+            healthbar.value = health_now;
+            GameObject.Find("HealthFill").GetComponent<Image>().color = new Color(1 - health_now / health_max, -1 + health_now / health_max, .2f);
         }
         yield return null;
     }

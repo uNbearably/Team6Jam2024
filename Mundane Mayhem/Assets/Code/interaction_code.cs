@@ -33,12 +33,13 @@ public class interaction_code : MonoBehaviour
     {
         original_size= transform.localScale;
         player = GameObject.Find("Player");
-        start_pos= player.transform.position;
+        start_pos= transform.position;
 
         switch (act_now)
         {
             case act_type.quest:
-                player.GetComponent<player_code>().customers.Append(gameObject);
+                player.GetComponent<player_code>().customers.Add(gameObject);
+                StartCoroutine(player.GetComponent<player_code>().customerShuffle());
                 break;
         }
         //dialogue_object = GameObject.Find("Dialogue");
@@ -52,10 +53,9 @@ public class interaction_code : MonoBehaviour
         switch (act_now)
         {
             case act_type.quest:
-                if (order > 0)
-                { transform.position = Vector3.Lerp(transform.position, new Vector3(order * 2, 0, 0), .1f); }
+                if (order >= 0)
+                { transform.position = Vector3.Lerp(transform.position, new Vector3(order * 2, 1, 1.5f), .1f); }
                 else { transform.position = Vector3.Lerp(transform.position, start_pos, .1f); }
-
                 break;
 
             case act_type.travel:
@@ -99,6 +99,8 @@ public class interaction_code : MonoBehaviour
                     { 
                         transform.position += Vector3.up;
                         codeObj.global_words = new string[] { my_response[0] };
+                        player.GetComponent<player_code>().customers.Remove(gameObject);
+                        StartCoroutine(player.GetComponent<player_code>().customerShuffle()); //shuffle players
                     } 
                     else
                     { codeObj.global_words = new string[] { my_response[1] }; StartCoroutine(player.GetComponent<player_code>().hurt()); } //fail task
