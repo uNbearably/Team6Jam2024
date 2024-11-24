@@ -31,15 +31,18 @@ public class player_code : MonoBehaviour
     public float shake_now;
 
     public Vector3 go_pos;
+    public Vector3 start_pos;
 
     public enum equip_type {none, item, gun};
     public equip_type equip_now;
     public GameObject equipment;
 
+    public GameObject[] customers;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        go_pos=transform.position;
+        start_pos=transform.position;
         //rb = gameObject.GetComponent<Rigidbody>();
         //cam_target = GameObject.Find("cam_target");
         //cursor = GameObject.Find("cursor");
@@ -55,6 +58,7 @@ public class player_code : MonoBehaviour
             //new move
 
             transform.position = Vector3.Lerp(transform.position, go_pos, .5f);
+            if (Input.GetButtonDown("Jump")) { go_pos = start_pos; transform.rotation = Quaternion.Euler(0,0,0); } //reset rotation
             //transform.position = 5*Vector3Int.FloorToInt(go_pos/5);
             //
             //old move
@@ -138,7 +142,7 @@ public class player_code : MonoBehaviour
 
         if (Physics.Raycast(raytarg.transform.transform.position, -raytarg.transform.forward, out hit, 10)&& hit.transform.tag == "interact"&&stun_now<=0)
         {
-            cursor.transform.position = (hit.point + hit.transform.position)/2;
+            cursor.transform.position = (hit.point*3 + hit.transform.position)/4;
             if (Input.GetButtonDown("Fire1")&&stun_now<=0)
             {
                 StartCoroutine(hit.transform.gameObject.GetComponent<interaction_code>().interact());
@@ -160,8 +164,6 @@ public class player_code : MonoBehaviour
                 equipment = null;
             }
         } //place cursor   
-
-
 
 
 
@@ -187,7 +189,8 @@ public class player_code : MonoBehaviour
         GameObject.Find("HealthFill").GetComponent<Image>().color=new Color(1-health_now/health_max, -1 + health_now / health_max,.2f);
         if (health_now <= 0)
         {
-            transform.position = new Vector3(0, 1, 0);
+            transform.position = start_pos;
+            transform.rotation = Quaternion.Euler(0,0,0);
             speed_now *= 0;
             grav_now *= 0;
             additional_force *= 0;
@@ -195,4 +198,16 @@ public class player_code : MonoBehaviour
         }
         yield return null;
     }
+
+    public IEnumerator customerShuffle()
+    {
+        var t = 0;
+        foreach (GameObject i in customers)
+            { i.GetComponent<interaction_code>().order = t; t++; }
+
+
+        yield return null;
+
+    }
+
 }

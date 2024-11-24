@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Linq;
 using System.Threading;
 using UnityEditor;
 using UnityEngine;
@@ -13,6 +14,7 @@ public class interaction_code : MonoBehaviour
     public string[] my_words = new string[] { "you look so incredibly bored.", "aren't you?" };
     public string[] my_response = new string[] { "correct", "incorrect" };
 
+    private Vector3 start_pos;
     private Vector3 original_size;
     public bool freeze_player = false;
     private GameObject player;
@@ -20,6 +22,10 @@ public class interaction_code : MonoBehaviour
 
     public enum item_type { none, soda,ciggy, wonster, notpi,chipchip,chipblue};
     public item_type item_now;
+    public int order;
+
+
+
     //public GameObject dialogue_object;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -27,15 +33,31 @@ public class interaction_code : MonoBehaviour
     {
         original_size= transform.localScale;
         player = GameObject.Find("Player");
+        start_pos= player.transform.position;
+
+        switch (act_now)
+        {
+            case act_type.quest:
+                player.GetComponent<player_code>().customers.Append(gameObject);
+                break;
+        }
         //dialogue_object = GameObject.Find("Dialogue");
     }
 
     // Update is called once per frame
     void Update()
     {
+        
         transform.localScale = (transform.localScale * 9 + original_size) / 10;
         switch (act_now)
         {
+            case act_type.quest:
+                if (order > 0)
+                { transform.position = Vector3.Lerp(transform.position, new Vector3(order * 2, 0, 0), .1f); }
+                else { transform.position = Vector3.Lerp(transform.position, start_pos, .1f); }
+
+                break;
+
             case act_type.travel:
                 if (Vector3.Distance(GameObject.Find("Player").transform.position,transform.position)<3)
                 { GetComponent<Collider>().enabled=false; GetComponent<MeshRenderer>().enabled = false; }
