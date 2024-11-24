@@ -77,7 +77,7 @@ public class interaction_code : MonoBehaviour
                 break;
             case act_type.quest:
                 if (order >= 0)
-                { transform.position = Vector3.Lerp(transform.position, new Vector3(order * 2, 1, 1.5f), .1f); }
+                { transform.position = Vector3.Lerp(transform.position, new Vector3(order * 2, 1, 1.5f), .05f); }
                 else { transform.position = Vector3.Lerp(transform.position, start_pos, .1f); }
                 break;
 
