@@ -42,6 +42,9 @@ public class dialogue_code : MonoBehaviour
                 yield return new WaitForSeconds(.05f);
                 to_type = (global_words[line_now].Substring(0, Mathf.Clamp(visible_characters,0, global_words[line_now].Length)));
                 my_text.text = to_type;
+
+                if (freeze_player)
+                { GameObject.Find("Player").GetComponent<player_code>().stun_now = .1f; }
             }
            
             while (!Input.GetButton("Fire1")) 
