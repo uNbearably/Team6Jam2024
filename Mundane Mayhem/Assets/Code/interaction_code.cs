@@ -10,7 +10,7 @@ public class interaction_code : MonoBehaviour
     public enum act_type { dialogue, equip, hold, quest, travel, gun};
     public act_type act_now;
 
-    public string[] my_words = new string[] { "queer", "aren't you?" };
+    public string[] my_words = new string[] { "you look so incredibly bored.", "aren't you?" };
     public string[] my_response = new string[] { "correct", "incorrect" };
 
     private Vector3 original_size;
@@ -18,7 +18,7 @@ public class interaction_code : MonoBehaviour
     private GameObject player;
     private bool original = true;
 
-    public enum item_type { none, soda,ciggy};
+    public enum item_type { none, soda,ciggy, wonster, notpi,chipchip,chipblue};
     public item_type item_now;
     //public GameObject dialogue_object;
 

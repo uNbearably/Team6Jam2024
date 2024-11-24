@@ -366,7 +366,7 @@ MonoBehaviour:
   cursor: {fileID: 8573883137915035705}
   additional_force: {x: 0, y: 0, z: 0}
   health_max: 5
-  cursor_max: {x: 0.8, y: 0.4}
+  cursor_max: {x: 0.8, y: 0.5}
   cursor_now: {x: 0, y: 0}
   stun_now: 0
   shake_now: 0
@@ -538,7 +538,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Gay
+  m_text: Technocolor
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -603,7 +603,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: -1296.5804, w: -183.27705}
+  m_margin: {x: -217.40222, y: 0, z: -1296.5804, w: -183.27705}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -675,7 +675,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3165125344417430650}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
