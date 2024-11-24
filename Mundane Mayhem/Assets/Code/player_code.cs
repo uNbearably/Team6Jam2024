@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using System.Threading;
-using UnityEditor.SearchService;
+//using UnityEditor.SearchService;
 using UnityEngine.SceneManagement;
 using Unity.VisualScripting;
 //using UnityEngine.UIElements;
@@ -134,7 +134,7 @@ public class player_code : MonoBehaviour
 
         //cursor
         GameObject raytarg = GameObject.Find("ray_target");
-        cursor_now += new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y")) * Time.deltaTime * 4;
+        cursor_now += new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y")) * Time.deltaTime * 3;
 
         cursor_now.x = Mathf.Clamp(cursor_now.x, -cursor_max.x * 2, cursor_max.x * 2);
         cursor_now.y = Mathf.Clamp(cursor_now.y, -cursor_max.y*1, cursor_max.y*1);
