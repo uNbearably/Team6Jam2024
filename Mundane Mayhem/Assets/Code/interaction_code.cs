@@ -118,7 +118,8 @@ public class interaction_code : MonoBehaviour
             case act_type.quest:
                 if (player.GetComponent<player_code>().equipment!=null)//quest check
                 {
-                   
+                    freeze_player = false;
+
 
                     if (player.GetComponent<player_code>().equipment.GetComponent<interaction_code>().item_now == item_now) //task complete
                     {
@@ -144,6 +145,7 @@ public class interaction_code : MonoBehaviour
                 }
                 else
                     {
+                        freeze_player = true;
                         codeObj.global_words = my_words; 
                         while (player.GetComponent<player_code>().stun_now>0)
                         {
@@ -164,7 +166,7 @@ public class interaction_code : MonoBehaviour
                     }
                 }
                 codeObj.freeze_player = freeze_player;
-
+                codeObj.talker = gameObject;
                 StartCoroutine(codeObj.speak());
                 yield return new WaitForSeconds(1.5f);
                 transform.GetChild(0).gameObject.GetComponent<Renderer>().enabled = (true);   //get normal expression

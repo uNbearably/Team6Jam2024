@@ -44,6 +44,10 @@ public class player_code : MonoBehaviour
     public GameObject quest_item;
 
 
+    public GameObject win_screen;
+    public GameObject lose_screen;
+
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -223,6 +227,8 @@ public class player_code : MonoBehaviour
         if (health_now <= 0)
         {
             x_rot=90;// = Quaternion.Euler(0, 90, 0);
+            lose_screen.SetActive(true);
+
             while (!Input.GetButton("Fire1")) { yield return new WaitForEndOfFrame(); stun_now = .1f; }
 
 
@@ -249,6 +255,7 @@ public class player_code : MonoBehaviour
             { i.GetComponent<interaction_code>().order = t; t++; }
 
 
+        if (customers.Count <= 0) { win_screen.SetActive(true); }
         yield return null;
 
     }

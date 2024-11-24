@@ -13,6 +13,7 @@ public class dialogue_code : MonoBehaviour
     private int visible_characters = 0;
     private string to_type = "";
     public AudioClip voice;
+    public GameObject talker;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -40,6 +41,8 @@ public class dialogue_code : MonoBehaviour
             while (visible_characters < global_words[line_now].Length) //click clack type
             {
                 visible_characters += 1;
+                if (talker!=null) { talker.transform.localScale = new Vector3(.9f, 1.2f, .9f); }
+
                 yield return new WaitForSeconds(.0075f);
                 to_type = (global_words[line_now].Substring(0, Mathf.Clamp(visible_characters,0, global_words[line_now].Length)));
                 my_text.text = to_type;
@@ -76,6 +79,7 @@ public class dialogue_code : MonoBehaviour
             line_now += 1;
         }
         my_text.text = "";
+        talker = null;
 
         yield return null;
     }
