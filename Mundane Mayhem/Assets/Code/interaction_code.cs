@@ -9,12 +9,18 @@ using UnityEngine.UIElements;
 
 public class interaction_code : MonoBehaviour
 {
-    public enum act_type { dialogue, equip, hold, quest, travel, gun};
-    public act_type act_now;
+    [Header("NPC Variables")]
 
+    public GameObject quest_item;
+    public AudioClip voice;
     public string[] my_words = new string[] { "you look so incredibly bored.", "aren't you?" };
     public string[] my_response = new string[] { "correct", "incorrect" };
 
+    
+
+    public enum act_type { dialogue, equip, hold, quest, travel, gun, display };
+    [Header("Other Properties")]
+    public act_type act_now;
     private Vector3 start_pos;
     private Vector3 original_size;
     public bool freeze_player = false;
@@ -22,10 +28,13 @@ public class interaction_code : MonoBehaviour
     private bool original = true;
     
 
+
+
     public enum item_type { none, soda,ciggy, soda_wonster, soda_notpee,chip_chipchip,chip_blue, candy, slushee, soda_ahhhh,soda_beer,candy_red,candy_green,coffee,burger};
     public item_type item_now;
     public int order;
-
+    private float charlie = 10f;
+    
 
     
 
@@ -36,13 +45,14 @@ public class interaction_code : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        original_size= transform.localScale;
+        original_size = transform.localScale;
         player = GameObject.Find("Player");
         start_pos= transform.position;
 
         switch (act_now)
         {
             case act_type.quest:
+                item_now = quest_item.GetComponent<interaction_code>().item_now;
                 transform.GetChild(1).gameObject.transform.position -= Vector3.up*2;
                 transform.GetChild(0).gameObject.GetComponent<Renderer>().enabled = (true);   //get normal
                 transform.GetChild(1).gameObject.GetComponent<Renderer>().enabled = (false); //hide mad
@@ -57,10 +67,14 @@ public class interaction_code : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
-        transform.localScale = (transform.localScale * 9 + original_size) / 10;
+        if (charlie>1) { transform.localScale = (transform.localScale * 9 + original_size) / 10; }
         switch (act_now)
         {
+            case act_type.equip:
+                if (!original&& gameObject.GetComponent<Collider>().enabled) { charlie -= Time.deltaTime; } 
+                if (charlie<1) { transform.localScale=Vector3.Lerp(new Vector3(0, 0, 0),original_size,charlie); }
+                if (charlie<=0) { Destroy(gameObject); }
+                break;
             case act_type.quest:
                 if (order >= 0)
                 { transform.position = Vector3.Lerp(transform.position, new Vector3(order * 2, 1, 1.5f), .1f); }
@@ -104,12 +118,11 @@ public class interaction_code : MonoBehaviour
             case act_type.quest:
                 if (player.GetComponent<player_code>().equipment!=null)//quest check
                 {
+                   
+
                     if (player.GetComponent<player_code>().equipment.GetComponent<interaction_code>().item_now == item_now) //task complete
                     {
-                        //clear hand
-                        Destroy(player.GetComponent<player_code>().equipment);
-                        player.GetComponent<player_code>().equipment=null;
-                        player.GetComponent<player_code>().equip_now=player_code.equip_type.none;
+                        
                         //satisfy
                         codeObj.global_words = new string[] { my_response[0] };
                         player.GetComponent<player_code>().customers.Remove(gameObject);
@@ -117,24 +130,45 @@ public class interaction_code : MonoBehaviour
                         order = -1000;
                     } 
                     else
-                    { codeObj.global_words = new string[] //fail task
                     {
-                        my_response[1] }; 
+                        codeObj.global_words = new string[] { my_response[1] }; //fail task
                         StartCoroutine(player.GetComponent<player_code>().hurt());
-                        transform.GetChild(0).gameObject.GetComponent<Renderer>().enabled = (false); //hide normal
-                        transform.GetChild(1).gameObject.GetComponent<Renderer>().enabled = (true);  //get mad
-                        yield return new WaitForSeconds(1.5f);
-                        transform.GetChild(0).gameObject.GetComponent<Renderer>().enabled = (true);   //get normal
-                        transform.GetChild(1).gameObject.GetComponent<Renderer>().enabled = (false); //hide mad
+                        transform.GetChild(0).gameObject.GetComponent<Renderer>().enabled = (false); //hide normal expression
+                        transform.GetChild(1).gameObject.GetComponent<Renderer>().enabled = (true);  //get mad expression
+                    }
+
+                    //clear hand
+                    Destroy(player.GetComponent<player_code>().equipment);
+                    player.GetComponent<player_code>().equipment = null;
+                    player.GetComponent<player_code>().equip_now = player_code.equip_type.none;
+                }
+                else
+                    {
+                        codeObj.global_words = my_words; 
+                        while (player.GetComponent<player_code>().stun_now>0)
+                        {
+                        yield return new WaitForEndOfFrame();
+                        }
+    //assign item to to-do list
+                        if (quest_item!=null)
+                        {if (player.GetComponent<player_code>().quest_item!=null) { Destroy(player.GetComponent<player_code>().quest_item); player.GetComponent<player_code>().quest_item = null; }
+                        GameObject to_do_item = Instantiate(quest_item);
+                        to_do_item.gameObject.GetComponent<Collider>().enabled = false;
+                        to_do_item.layer = 6;
+                        to_do_item.GetComponent<interaction_code>().act_now = interaction_code.act_type.display;
+                        to_do_item.transform.GetChild(0).gameObject.layer = 6;
+                        player.GetComponent<player_code>().quest_item = to_do_item;
+                        to_do_item.transform.parent=GameObject.Find("to_do").transform;
+                        to_do_item.transform.position=GameObject.Find("to_do").transform.position;
 
                     }
                 }
-                else
-                    {codeObj.global_words = my_words;}
                 codeObj.freeze_player = freeze_player;
 
                 StartCoroutine(codeObj.speak());
-                //check what player is holding with substring    
+                yield return new WaitForSeconds(1.5f);
+                transform.GetChild(0).gameObject.GetComponent<Renderer>().enabled = (true);   //get normal expression
+                transform.GetChild(1).gameObject.GetComponent<Renderer>().enabled = (false); //hide mad expression
                 break;
             case act_type.travel:
                 player.GetComponent<player_code>().go_pos = transform.position;

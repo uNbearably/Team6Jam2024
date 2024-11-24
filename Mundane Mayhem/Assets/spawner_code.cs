@@ -20,7 +20,8 @@ public class spawner_code : MonoBehaviour
         { 
             spawn_timer=Random.Range(5,30 - intensity / 60);
             int customernumber = (int) Mathf.Floor(Random.Range(0, customers.Length+.9f));
-            Instantiate(customers[customernumber],transform.position,Quaternion.Euler(0,0,0)); 
+            Instantiate(customers[customernumber],transform.position,Quaternion.Euler(0,0,0));
+            print(customers[customernumber]);
         }
     }
 }

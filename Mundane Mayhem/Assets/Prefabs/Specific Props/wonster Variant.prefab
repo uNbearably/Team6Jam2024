@@ -16,13 +16,25 @@ PrefabInstance:
       propertyPath: m_Name
       value: wonster Variant
       objectReference: {fileID: 0}
+    - target: {fileID: 4341657596652074945, guid: 6f04227f32effcb4596443b6d92c2a5b, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4934793477790974827, guid: 6f04227f32effcb4596443b6d92c2a5b, type: 3}
       propertyPath: m_Size.x
-      value: 1.5
+      value: 1.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4934793477790974827, guid: 6f04227f32effcb4596443b6d92c2a5b, type: 3}
+      propertyPath: m_Size.y
+      value: 2.2
       objectReference: {fileID: 0}
     - target: {fileID: 4934793477790974827, guid: 6f04227f32effcb4596443b6d92c2a5b, type: 3}
       propertyPath: m_Size.z
-      value: 1.5
+      value: 1.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4934793477790974827, guid: 6f04227f32effcb4596443b6d92c2a5b, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8736567546217581952, guid: 6f04227f32effcb4596443b6d92c2a5b, type: 3}
       propertyPath: m_LocalScale.x
@@ -38,15 +50,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8736567546217581952, guid: 6f04227f32effcb4596443b6d92c2a5b, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -5.198
+      value: 3.5924072
       objectReference: {fileID: 0}
     - target: {fileID: 8736567546217581952, guid: 6f04227f32effcb4596443b6d92c2a5b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.9354384
+      value: 3.1100001
       objectReference: {fileID: 0}
     - target: {fileID: 8736567546217581952, guid: 6f04227f32effcb4596443b6d92c2a5b, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 3.5130002
+      value: 1.5194237
       objectReference: {fileID: 0}
     - target: {fileID: 8736567546217581952, guid: 6f04227f32effcb4596443b6d92c2a5b, type: 3}
       propertyPath: m_LocalRotation.w
@@ -160,6 +172,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: ce0204fd859e4a448ba88357fba53448, type: 3}
       propertyPath: m_Name
       value: Can (17)
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ce0204fd859e4a448ba88357fba53448, type: 3}
+      propertyPath: m_Layer
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

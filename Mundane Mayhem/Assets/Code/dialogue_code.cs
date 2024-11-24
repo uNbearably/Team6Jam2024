@@ -12,6 +12,7 @@ public class dialogue_code : MonoBehaviour
     public bool freeze_player = false;
     private int visible_characters = 0;
     private string to_type = "";
+    public AudioClip voice;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -31,7 +32,7 @@ public class dialogue_code : MonoBehaviour
         int line_max = global_words.Length;
         int line_now = 0;
         visible_characters = 0;
-        yield return new WaitForSeconds(.2f);
+        yield return new WaitForSeconds(.02f);
 
         while (line_now<line_max)
         {

@@ -162,7 +162,7 @@ MonoBehaviour:
   - correct
   - incorrect
   freeze_player: 1
-  item_now: 5
+  quest_item: {fileID: 4842287701797533867, guid: e0e0a787f5de6364a8ede187feaae49d, type: 3}
   order: 0
 --- !u!111 &5027020597065999882
 Animation:

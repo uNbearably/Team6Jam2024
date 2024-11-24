@@ -40,6 +40,9 @@ public class player_code : MonoBehaviour
     public GameObject equipment;
 
     public List<GameObject> customers;
+    public List<GameObject> jump_points;
+    public GameObject quest_item;
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -61,7 +64,12 @@ public class player_code : MonoBehaviour
             //new move
 
             transform.position = Vector3.Lerp(transform.position, go_pos, .5f);
-            if (Input.GetButtonDown("Jump")) { go_pos = start_pos; transform.rotation = Quaternion.Euler(0,0,0); } //reset rotation
+            if (Input.GetKeyDown(KeyCode.Keypad1)|| Input.GetKeyDown(KeyCode.Alpha1)) { go_pos = jump_points[1].transform.position; }
+            if (Input.GetKeyDown(KeyCode.Keypad2) || Input.GetKeyDown(KeyCode.Alpha2)) { go_pos = jump_points[2].transform.position; }
+            if (Input.GetKeyDown(KeyCode.Keypad3) || Input.GetKeyDown(KeyCode.Alpha3)) { go_pos = jump_points[3].transform.position; }
+            if (Input.GetKeyDown(KeyCode.Keypad4) || Input.GetKeyDown(KeyCode.Alpha4)) { go_pos = jump_points[4].transform.position; }
+
+            if (Input.GetButtonDown("Jump")|| Input.GetKeyDown(KeyCode.Keypad0)|| Input.GetKeyDown(KeyCode.Alpha0)) { go_pos = jump_points[0].transform.position;  y_rot*=0; } //reset rotation
             //transform.position = 5*Vector3Int.FloorToInt(go_pos/5);
             //
             //old move
@@ -91,6 +99,8 @@ public class player_code : MonoBehaviour
 
             //Look Around
             x_rot = Mathf.Clamp(x_rot, -20, 20);
+            y_rot += Time.deltaTime * 90 * Input.GetAxis("Horizontal"); //pivot alt
+
 
             if (Mathf.Abs(cursor_now.x) > cursor_max.x * 3 / 4)
             {
@@ -101,31 +111,28 @@ public class player_code : MonoBehaviour
                 //{ cursor_now.x *= 3/4; }
             }
 
-            if (Mathf.Abs(cursor_now.y) > cursor_max.y * 5 / 4) //temporarily disabled
+            if (Mathf.Abs(cursor_now.y) > cursor_max.y * 100 / 4&& Mathf.Abs(cursor_now.y) > cursor_max.y * 4 / 4) //disabled
             {
-                x_rot += Time.deltaTime * 45 * (cursor_now.y / cursor_max.y); //pivot
-                if (Input.GetAxisRaw("Mouse Y") == 0)
-                { cursor_now.y -= Mathf.Sign(cursor_now.y * Time.deltaTime * .75f); }
+                x_rot -= Time.deltaTime * 90 * (cursor_now.y / cursor_max.y); //pivot
+                if (Input.GetAxisRaw("Mouse Y") == 0&& Mathf.Abs(cursor_now.y) > cursor_max.y * 4 / 4)
+                { 
+                    cursor_now.y = Vector2.Lerp(cursor_now,new Vector2(0,0), .02f).y;
+                    if (cursor_now.y> cursor_max.y * 4 / 5)
+                    { cursor_now.y = Vector2.Lerp(new Vector2(0, x_rot), new Vector2(0, 0), .02f).y; }
+                    
+                }
             }
         }
         else
         { rb.linearVelocity *= 0; rb.angularVelocity *= 0; }
-        //Camera
-        Cursor.lockState = CursorLockMode.Confined;
-        Cursor.visible = false;
-        cam.transform.position = cam_target.transform.position + transform.right * .5f * (Mathf.Sin(Mathf.Clamp(shake_now, 0, 100000)));
-        cam.transform.rotation = Quaternion.Euler(x_rot, y_rot, 0);
-        //cam.transform.rotation = Quaternion.Lerp(cam.transform.rotation,Quaternion.Euler(x_rot, y_rot, 0),.1f);
-
-        shake_now -= Mathf.PI * 20 * Time.deltaTime;  //cam shake
-
+        
 
         //cursor
         GameObject raytarg = GameObject.Find("ray_target");
-        cursor_now += new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y")) * Time.deltaTime * 2;
+        cursor_now += new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y")) * Time.deltaTime * 4;
 
         cursor_now.x = Mathf.Clamp(cursor_now.x, -cursor_max.x * 2, cursor_max.x * 2);
-        cursor_now.y = Mathf.Clamp(cursor_now.y, -cursor_max.y, cursor_max.y);
+        cursor_now.y = Mathf.Clamp(cursor_now.y, -cursor_max.y*1, cursor_max.y*1);
         raypos = cam_target.transform.position + transform.right * cursor_now.x + transform.up * cursor_now.y;
 
         Debug.DrawRay(raytarg.transform.position, -raytarg.transform.transform.forward * 10, Color.yellow);
@@ -136,7 +143,6 @@ public class player_code : MonoBehaviour
         {
             case equip_type.item:
                 equipment.transform.position = cursor.transform.position;
-                equipment.GetComponent<Collider>().enabled = false;
                 break;
         }
         //interactions
@@ -168,9 +174,32 @@ public class player_code : MonoBehaviour
             }
         } //place cursor   
 
+        
+
+
 
 
     }
+
+    void FixedUpdate()
+    {
+        //Camera
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+        cam.transform.position = cam_target.transform.position + transform.right * .5f * (Mathf.Sin(Mathf.Clamp(shake_now, 0, 100000)));
+        cam.transform.rotation = Quaternion.Euler(x_rot, y_rot, 0);
+        //cam.transform.rotation = Quaternion.Lerp(cam.transform.rotation,Quaternion.Euler(x_rot, y_rot, 0),.1f);
+
+        shake_now -= Mathf.PI * 20 * Time.deltaTime;  //cam shake
+
+
+        //QUEST ITEM 
+        if (quest_item != null) 
+        //{ quest_item.transform.position = GameObject.Find("to_do").transform.position; }
+        { quest_item.transform.rotation *= Quaternion.Euler(0,90*Time.deltaTime,0); }
+    }
+
+
     private void OnTriggerEnter(Collider other)
     {
         //hurt
@@ -189,18 +218,19 @@ public class player_code : MonoBehaviour
         //health_now -= other.GetComponent<value_holder>().value;
         health_now -= 1;
         healthbar.value=health_now;
-        GameObject.Find("HealthFill").GetComponent<Image>().color=new Color(1-health_now/health_max, -1 + health_now / health_max,.2f);
+        GameObject.Find("HealthFill").GetComponent<Image>().color=new Color(1-health_now/health_max, health_now / health_max,.2f);
 //death
         if (health_now <= 0)
         {
-            transform.rotation = Quaternion.Euler(0, 90, 0);
-            while (!Input.GetButton("Fire1")) { yield return new WaitForEndOfFrame(); }
+            x_rot=90;// = Quaternion.Euler(0, 90, 0);
+            while (!Input.GetButton("Fire1")) { yield return new WaitForEndOfFrame(); stun_now = .1f; }
 
 
             GameObject.Find("spawner").GetComponent<spawner_code>().spawn_timer = 5;
             GameObject.Find("spawner").GetComponent<spawner_code>().intensity = 0;
             transform.position = start_pos;
-            transform.rotation = Quaternion.Euler(0,0,0);
+            y_rot = 0;
+            x_rot = 0;
             speed_now *= 0;
             grav_now *= 0;
             additional_force *= 0;
