@@ -79,7 +79,7 @@ public class interaction_code : MonoBehaviour
                         codeObj.global_words = new string[] { my_response[0] };
                     } 
                     else
-                    { codeObj.global_words = new string[] { my_response[1] }; }
+                    { codeObj.global_words = new string[] { my_response[1] }; StartCoroutine(player.GetComponent<player_code>().hurt()); } //fail task
                 }
                 else
                     {codeObj.global_words = my_words;}
@@ -89,7 +89,7 @@ public class interaction_code : MonoBehaviour
                 //check what player is holding with substring    
                 break;
             case act_type.travel:
-                GameObject.Find("Player").GetComponent<player_code>().go_pos = transform.position;
+                player.GetComponent<player_code>().go_pos = transform.position;
                 break;
         }
         transform.localScale *= 1.25f;

@@ -1,4 +1,6 @@
+using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 //using UnityEngine.UIElements;
 
 public class player_code : MonoBehaviour
@@ -113,7 +115,7 @@ public class player_code : MonoBehaviour
 
         //cursor
         GameObject raytarg = GameObject.Find("ray_target");
-        cursor_now += new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y")) * Time.deltaTime * 5;
+        cursor_now += new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y")) * Time.deltaTime * 2;
 
         cursor_now.x = Mathf.Clamp(cursor_now.x, -cursor_max.x * 2, cursor_max.x * 2);
         cursor_now.y = Mathf.Clamp(cursor_now.y, -cursor_max.y, cursor_max.y);
@@ -136,7 +138,7 @@ public class player_code : MonoBehaviour
 
         if (Physics.Raycast(raytarg.transform.transform.position, -raytarg.transform.forward, out hit, 10)&& hit.transform.tag == "interact"&&stun_now<=0)
         {
-            cursor.transform.position = (hit.point+ hit.transform.position)/2;
+            cursor.transform.position = (hit.point + hit.transform.position)/2;
             if (Input.GetButtonDown("Fire1")&&stun_now<=0)
             {
                 StartCoroutine(hit.transform.gameObject.GetComponent<interaction_code>().interact());
@@ -169,18 +171,28 @@ public class player_code : MonoBehaviour
         //hurt
         if (other.tag == "hurt")
         {
-            additional_force -= (4 * (other.transform.position - gameObject.transform.position));
-            stun_now = .2f;
-            shake_now = 4 * Mathf.PI;
-            health_now -= other.GetComponent<value_holder>().value;
-            if (health_now <= 0)
-            {
-                transform.position = new Vector3(0, 1, 0);
-                speed_now *= 0;
-                grav_now *= 0;
-                additional_force *= 0;
-                health_now = health_max;
-            }
+            StartCoroutine(hurt());
         }
+    }
+
+    public IEnumerator hurt()
+    {
+        Slider healthbar = GameObject.Find("healthbar").GetComponent<Slider>();
+        //additional_force -= (4 * (other.transform.position - gameObject.transform.position));
+        stun_now = .2f;
+        shake_now = 4 * Mathf.PI;
+        //health_now -= other.GetComponent<value_holder>().value;
+        health_now -= 1;
+        healthbar.value=health_now;
+        GameObject.Find("HealthFill").GetComponent<Image>().color=new Color(1-health_now/health_max, -1 + health_now / health_max,.2f);
+        if (health_now <= 0)
+        {
+            transform.position = new Vector3(0, 1, 0);
+            speed_now *= 0;
+            grav_now *= 0;
+            additional_force *= 0;
+            health_now = health_max;
+        }
+        yield return null;
     }
 }

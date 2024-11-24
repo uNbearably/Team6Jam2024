@@ -39,10 +39,27 @@ public class dialogue_code : MonoBehaviour
             while (visible_characters < global_words[line_now].Length) //click clack type
             {
                 visible_characters += 1;
-                yield return new WaitForSeconds(.05f);
+                yield return new WaitForSeconds(.0075f);
                 to_type = (global_words[line_now].Substring(0, Mathf.Clamp(visible_characters,0, global_words[line_now].Length)));
                 my_text.text = to_type;
 
+                //pauses in speech
+                if (visible_characters>1&&visible_characters< global_words[line_now].Length-1)
+                {string thischunk = global_words[line_now].Substring(visible_characters-1, 2);
+
+                    switch (thischunk)
+                    {
+                        case "  ":
+                            yield return new WaitForSeconds(.01f);
+                            break;
+                        case ". ":
+                            yield return new WaitForSeconds(.02f);
+                            break;
+                        case "? ":
+                            yield return new WaitForSeconds(.04f);
+                            break;
+                    }
+}
                 if (freeze_player)
                 { GameObject.Find("Player").GetComponent<player_code>().stun_now = .1f; }
             }
