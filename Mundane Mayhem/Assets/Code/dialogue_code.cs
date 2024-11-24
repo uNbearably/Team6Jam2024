@@ -1,4 +1,4 @@
-using System;
+
 using NUnit.Framework.Internal;
 using TMPro;
 using UnityEngine;
@@ -41,9 +41,10 @@ public class dialogue_code : MonoBehaviour
             while (visible_characters < global_words[line_now].Length) //click clack type
             {
                 visible_characters += 1;
-                if (talker!=null) { talker.transform.localScale = new Vector3(.9f, 1.2f, .9f); }
+                float wobble = Random.Range(-.1f, .1f);
+                if (talker!=null) { talker.transform.localScale = new Vector3(1+wobble, 1-wobble, 1+wobble); }
 
-                yield return new WaitForSeconds(.0075f);
+                yield return new WaitForSeconds(.0125f);
                 to_type = (global_words[line_now].Substring(0, Mathf.Clamp(visible_characters,0, global_words[line_now].Length)));
                 my_text.text = to_type;
 

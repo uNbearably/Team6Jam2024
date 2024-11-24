@@ -3,6 +3,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using System.Threading;
+using UnityEditor.SearchService;
+using UnityEngine.SceneManagement;
+using Unity.VisualScripting;
 //using UnityEngine.UIElements;
 
 public class player_code : MonoBehaviour
@@ -17,7 +20,7 @@ public class player_code : MonoBehaviour
     public GameObject cam_target;
     public GameObject cursor;
     private float x_rot=0;
-    private float y_rot=0;
+    private float y_rot=90;
 
     public Vector3 additional_force;
 
@@ -105,16 +108,14 @@ public class player_code : MonoBehaviour
             x_rot = Mathf.Clamp(x_rot, -20, 20);
             y_rot += Time.deltaTime * 90 * Input.GetAxis("Horizontal"); //pivot alt
 
-
+            //X rot
             if (Mathf.Abs(cursor_now.x) > cursor_max.x * 3 / 4)
             {
                 y_rot += Time.deltaTime * 90 * (cursor_now.x / cursor_max.x); //pivot
-                //y_rot += 45 * Mathf.Sign(cursor_now.x); //pivot
-                if (Input.GetAxisRaw("Mouse X") == 0)
+                if (Input.GetAxisRaw("Mouse X") == 0&& Mathf.Abs(cursor_now.x) > cursor_max.x)
                 { cursor_now.x -= Mathf.Sign(cursor_now.x) * Time.deltaTime * 1.5f; }
-                //{ cursor_now.x *= 3/4; }
             }
-
+            //yRot
             if (Mathf.Abs(cursor_now.y) > cursor_max.y * 100 / 4&& Mathf.Abs(cursor_now.y) > cursor_max.y * 4 / 4) //disabled
             {
                 x_rot -= Time.deltaTime * 90 * (cursor_now.y / cursor_max.y); //pivot
@@ -122,7 +123,7 @@ public class player_code : MonoBehaviour
                 { 
                     cursor_now.y = Vector2.Lerp(cursor_now,new Vector2(0,0), .02f).y;
                     if (cursor_now.y> cursor_max.y * 4 / 5)
-                    { cursor_now.y = Vector2.Lerp(new Vector2(0, x_rot), new Vector2(0, 0), .02f).y; }
+                    { cursor_now.y = Vector2.Lerp(new Vector2(0, x_rot), new Vector2(0, 0), .0f).y; }
                     
                 }
             }
@@ -155,7 +156,9 @@ public class player_code : MonoBehaviour
 
         if (Physics.Raycast(raytarg.transform.transform.position, -raytarg.transform.forward, out hit, 10)&& hit.transform.tag == "interact"&&stun_now<=0)
         {
-            cursor.transform.position = (hit.point*3 + hit.transform.position)/4;
+            cursor.transform.position = (hit.point + hit.transform.position*3)/4;
+            cursor.transform.localScale=Vector3.one/6;
+            cursor.GetComponent<Renderer>().material.SetColor("_EmissionColor", Color.yellow);
             if (Input.GetButtonDown("Fire1")&&stun_now<=0)
             {
                 StartCoroutine(hit.transform.gameObject.GetComponent<interaction_code>().interact());
@@ -163,6 +166,9 @@ public class player_code : MonoBehaviour
         }
         else
         {
+            cursor.transform.localScale = Vector3.one/40;
+            cursor.GetComponent<Renderer>().material.SetColor("_EmissionColor", Color.white);
+
             cursor.transform.position = raypos + transform.forward * 1f;
         //throw
             if (equip_now==equip_type.item&&Input.GetButtonDown("Fire1"))
@@ -228,7 +234,7 @@ public class player_code : MonoBehaviour
         {
             x_rot=90;// = Quaternion.Euler(0, 90, 0);
             lose_screen.SetActive(true);
-
+            yield return new WaitForSeconds(1);
             while (!Input.GetButton("Fire1")) { yield return new WaitForEndOfFrame(); stun_now = .1f; }
 
 
@@ -244,6 +250,9 @@ public class player_code : MonoBehaviour
             //reset healthbar
             healthbar.value = health_now;
             GameObject.Find("HealthFill").GetComponent<Image>().color = new Color(1 - health_now / health_max, -1 + health_now / health_max, .2f);
+
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+
         }
         yield return null;
     }
@@ -255,7 +264,16 @@ public class player_code : MonoBehaviour
             { i.GetComponent<interaction_code>().order = t; t++; }
 
 
-        if (customers.Count <= 0) { win_screen.SetActive(true); }
+        //win
+        if (customers.Count <= 0) 
+        
+        {
+            win_screen.SetActive(true);
+            yield return new WaitForSeconds(1);
+
+            while (!Input.GetButton("Fire1")) { yield return new WaitForEndOfFrame(); stun_now = .1f; }
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
         yield return null;
 
     }
