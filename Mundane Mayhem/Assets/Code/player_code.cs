@@ -71,7 +71,7 @@ public class player_code : MonoBehaviour
         stun_now -= Time.deltaTime;
         if (stun_now <= 0)
         {
-            if (Input.GetButtonDown("Pause")) { paused = !paused; pause_screen.SetActive(paused); }
+            //if (Input.GetButtonDown("Pause")) { paused = !paused; pause_screen.SetActive(paused); }
             //new move
 
             transform.position = Vector3.Lerp(transform.position, go_pos, .5f);
@@ -137,7 +137,7 @@ public class player_code : MonoBehaviour
 
 
         //Camera
-        if (paused) { Cursor.lockState = CursorLockMode.Locked;}
+        if (!paused) { Cursor.lockState = CursorLockMode.Locked;}
         else { Cursor.lockState = CursorLockMode.None;}
         Cursor.visible = false;
         cam.transform.position = cam_target.transform.position + transform.right * .5f * (Mathf.Sin(Mathf.Clamp(shake_now, 0, 100000)));
