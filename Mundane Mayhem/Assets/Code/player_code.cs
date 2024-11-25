@@ -49,6 +49,8 @@ public class player_code : MonoBehaviour
 
     public GameObject win_screen;
     public GameObject lose_screen;
+    public GameObject pause_screen;
+    private bool paused = false;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -68,6 +70,7 @@ public class player_code : MonoBehaviour
         stun_now -= Time.deltaTime;
         if (stun_now <= 0)
         {
+            if (Input.GetButtonDown("Pause")) { paused = !paused; pause_screen.SetActive(paused); }
             //new move
 
             transform.position = Vector3.Lerp(transform.position, go_pos, .5f);
@@ -130,7 +133,23 @@ public class player_code : MonoBehaviour
         }
         else
         { rb.linearVelocity *= 0; rb.angularVelocity *= 0; }
-        
+
+
+        //Camera
+        if (paused) { Cursor.lockState = CursorLockMode.Locked;}
+        else { Cursor.lockState = CursorLockMode.None;}
+        Cursor.visible = false;
+        cam.transform.position = cam_target.transform.position + transform.right * .5f * (Mathf.Sin(Mathf.Clamp(shake_now, 0, 100000)));
+        cam.transform.rotation = Quaternion.Euler(x_rot, y_rot, 0);
+        //cam.transform.rotation = Quaternion.Lerp(cam.transform.rotation,Quaternion.Euler(x_rot, y_rot, 0),.1f);
+
+        shake_now -= Mathf.PI * 20 * Time.deltaTime;  //cam shake
+
+
+        //QUEST ITEM 
+        if (quest_item != null)
+        //{ quest_item.transform.position = GameObject.Find("to_do").transform.position; }
+        { quest_item.transform.rotation *= Quaternion.Euler(0, 90 * Time.deltaTime, 0); }
 
         //cursor
         GameObject raytarg = GameObject.Find("ray_target");
@@ -193,20 +212,7 @@ public class player_code : MonoBehaviour
 
     void FixedUpdate()
     {
-        //Camera
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-        cam.transform.position = cam_target.transform.position + transform.right * .5f * (Mathf.Sin(Mathf.Clamp(shake_now, 0, 100000)));
-        cam.transform.rotation = Quaternion.Euler(x_rot, y_rot, 0);
-        //cam.transform.rotation = Quaternion.Lerp(cam.transform.rotation,Quaternion.Euler(x_rot, y_rot, 0),.1f);
-
-        shake_now -= Mathf.PI * 20 * Time.deltaTime;  //cam shake
-
-
-        //QUEST ITEM 
-        if (quest_item != null) 
-        //{ quest_item.transform.position = GameObject.Find("to_do").transform.position; }
-        { quest_item.transform.rotation *= Quaternion.Euler(0,90*Time.deltaTime,0); }
+        
     }
 
 
