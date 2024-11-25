@@ -6,6 +6,7 @@ using System.Threading;
 //using UnityEditor.SearchService;
 using UnityEngine.SceneManagement;
 using Unity.VisualScripting;
+using NUnit.Framework;
 //using UnityEngine.UIElements;
 
 public class player_code : MonoBehaviour
@@ -265,9 +266,16 @@ public class player_code : MonoBehaviour
 
     public IEnumerator customerShuffle()
     {
+        //if (customers.Count>8) { customers= customers.OrderBy(x => Random.value).ToList(); }
         var t = 0;
         foreach (GameObject i in customers)
-            { i.GetComponent<interaction_code>().order = t; t++; }
+            {
+
+            if (t > 8) { Destroy(i); }  
+            i.GetComponent<interaction_code>().order = t; 
+            t++; 
+            
+            }
 
 
         //win
