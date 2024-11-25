@@ -155,7 +155,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   quest_item: {fileID: 4842287701797533867, guid: e0e0a787f5de6364a8ede187feaae49d, type: 3}
-  voice: {fileID: 0}
+  voice: {fileID: 8300000, guid: 6cc78f4567d409f4f9f80636e1e758b7, type: 3}
   my_words:
   - chip chips taste like bandages...
   - and i can't seem to eat enough of either!

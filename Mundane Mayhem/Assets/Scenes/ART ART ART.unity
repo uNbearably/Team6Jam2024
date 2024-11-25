@@ -2312,6 +2312,30 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2009876725739714883, guid: cfc7b62afca81cd4080a57390b341231, type: 3}
+      propertyPath: jump_points.Array.size
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2009876725739714883, guid: cfc7b62afca81cd4080a57390b341231, type: 3}
+      propertyPath: 'jump_points.Array.data[0]'
+      value: 
+      objectReference: {fileID: 1856544743}
+    - target: {fileID: 2009876725739714883, guid: cfc7b62afca81cd4080a57390b341231, type: 3}
+      propertyPath: 'jump_points.Array.data[1]'
+      value: 
+      objectReference: {fileID: 1563181172}
+    - target: {fileID: 2009876725739714883, guid: cfc7b62afca81cd4080a57390b341231, type: 3}
+      propertyPath: 'jump_points.Array.data[2]'
+      value: 
+      objectReference: {fileID: 1480558607}
+    - target: {fileID: 2009876725739714883, guid: cfc7b62afca81cd4080a57390b341231, type: 3}
+      propertyPath: 'jump_points.Array.data[3]'
+      value: 
+      objectReference: {fileID: 1272407603}
+    - target: {fileID: 2009876725739714883, guid: cfc7b62afca81cd4080a57390b341231, type: 3}
+      propertyPath: 'jump_points.Array.data[4]'
+      value: 
+      objectReference: {fileID: 1476444364}
     - target: {fileID: 3821740875214190434, guid: cfc7b62afca81cd4080a57390b341231, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.8
@@ -2541,6 +2565,11 @@ Transform:
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: ce0204fd859e4a448ba88357fba53448, type: 3}
   m_PrefabInstance: {fileID: 1849589504}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1476444364 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5219702668921808257, guid: 90932864045af6247b4486d232f84328, type: 3}
+  m_PrefabInstance: {fileID: 1441296550}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1480558605
 PrefabInstance:
@@ -3174,6 +3203,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ce0204fd859e4a448ba88357fba53448, type: 3}
+--- !u!1 &1856544743 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5219702668921808257, guid: 90932864045af6247b4486d232f84328, type: 3}
+  m_PrefabInstance: {fileID: 416377338}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1989405890
 GameObject:
   m_ObjectHideFlags: 0
