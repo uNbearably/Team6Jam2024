@@ -30,7 +30,7 @@ public class interaction_code : MonoBehaviour
 
 
 
-    public enum item_type { none, soda,ciggy, soda_wonster, soda_notpee,chip_chipchip,chip_blue, candy, slushee, soda_ahhhh,soda_beer,candy_red,candy_green,coffee,burger};
+    public enum item_type { none, soda,ciggy, soda_wonster, soda_notpee,chip_chipchip,chip_blue, candy, slushee, soda_ahhhh,soda_beer,candy_red,candy_green,coffee,burger,necronomicon,idol_of_the_old_god,pandoras_box};
     public item_type item_now;
     public int order;
     private float charlie = 10f;
