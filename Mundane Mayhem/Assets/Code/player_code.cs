@@ -7,6 +7,7 @@ using System.Threading;
 using UnityEngine.SceneManagement;
 using Unity.VisualScripting;
 using NUnit.Framework;
+using System.Linq;
 //using UnityEngine.UIElements;
 
 public class player_code : MonoBehaviour
@@ -47,11 +48,11 @@ public class player_code : MonoBehaviour
     public List<GameObject> jump_points;
     public GameObject quest_item;
 
-
     public GameObject win_screen;
     public GameObject lose_screen;
     public GameObject pause_screen;
     private bool paused = false;
+    
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -59,6 +60,8 @@ public class player_code : MonoBehaviour
     {
         go_pos=transform.position;
         start_pos=transform.position;
+
+        StartCoroutine(randomizeCustomers());
         //rb = gameObject.GetComponent<Rigidbody>();
         //cam_target = GameObject.Find("cam_target");
         //cursor = GameObject.Find("cursor");
@@ -71,14 +74,14 @@ public class player_code : MonoBehaviour
         stun_now -= Time.deltaTime;
         if (stun_now <= 0)
         {
-            //if (Input.GetButtonDown("Pause")) { paused = !paused; pause_screen.SetActive(paused); }
+            if (Input.GetButtonDown("Pause")) { paused = !paused; pause_screen.SetActive(paused); }
             //new move
 
             transform.position = Vector3.Lerp(transform.position, go_pos, .5f);
-            if (Input.GetKeyDown(KeyCode.Keypad1)|| Input.GetKeyDown(KeyCode.Alpha1)) { go_pos = jump_points[1].transform.position; }
+            if (Input.GetKeyDown(KeyCode.Keypad1) || Input.GetKeyDown(KeyCode.Alpha1)) { go_pos = jump_points[1].transform.position; }
             if (Input.GetKeyDown(KeyCode.Keypad2) || Input.GetKeyDown(KeyCode.Alpha2)) { go_pos = jump_points[2].transform.position; }
             if (Input.GetKeyDown(KeyCode.Keypad3) || Input.GetKeyDown(KeyCode.Alpha3)) { go_pos = jump_points[3].transform.position; }
-            if (Input.GetKeyDown(KeyCode.Keypad4) || Input.GetKeyDown(KeyCode.Alpha4)) { go_pos = jump_points[4].transform.position; }
+            if (Input.GetKeyDown(KeyCode.Keypad4) || Input.GetKeyDown(KeyCode.Alpha4)) { go_pos = jump_points[4].transform.position; y_rot = 180; }
 
             if (Input.GetButtonDown("Jump")|| Input.GetKeyDown(KeyCode.Keypad0)|| Input.GetKeyDown(KeyCode.Alpha0)) { go_pos = jump_points[0].transform.position;  y_rot*=0; } //reset rotation
             //transform.position = 5*Vector3Int.FloorToInt(go_pos/5);
@@ -113,9 +116,9 @@ public class player_code : MonoBehaviour
             y_rot += Time.deltaTime * 90 * Input.GetAxis("Horizontal"); //pivot alt
 
             //X rot
-            if (Mathf.Abs(cursor_now.x) > cursor_max.x * 3 / 4)
+            if (Mathf.Abs(cursor_now.x) > cursor_max.x * 4 / 5)
             {
-                y_rot += Time.deltaTime * 90 * (cursor_now.x / cursor_max.x); //pivot
+                y_rot += Time.deltaTime * 45 * (cursor_now.x / cursor_max.x); //pivot
                 if (Input.GetAxisRaw("Mouse X") == 0&& Mathf.Abs(cursor_now.x) > cursor_max.x)
                 { cursor_now.x -= Mathf.Sign(cursor_now.x) * Time.deltaTime * 1.5f; }
             }
@@ -137,8 +140,9 @@ public class player_code : MonoBehaviour
 
 
         //Camera
-        if (!paused) { Cursor.lockState = CursorLockMode.Locked;}
-        else { Cursor.lockState = CursorLockMode.None;}
+        //if (!paused) { Cursor.lockState = CursorLockMode.Locked;}
+        Cursor.visible= paused;
+        //else { Cursor.lockState = CursorLockMode.None;}
         Cursor.visible = false;
         cam.transform.position = cam_target.transform.position + transform.right * .5f * (Mathf.Sin(Mathf.Clamp(shake_now, 0, 100000)));
         cam.transform.rotation = Quaternion.Euler(x_rot, y_rot, 0);
@@ -146,16 +150,18 @@ public class player_code : MonoBehaviour
 
         shake_now -= Mathf.PI * 20 * Time.deltaTime;  //cam shake
 
-
-        //QUEST ITEM 
+//QUEST ITEM 
         if (quest_item != null)
         //{ quest_item.transform.position = GameObject.Find("to_do").transform.position; }
         { quest_item.transform.rotation *= Quaternion.Euler(0, 90 * Time.deltaTime, 0); }
 
-        //cursor
+//cursor
         GameObject raytarg = GameObject.Find("ray_target");
-        cursor_now += new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y")) * Time.deltaTime * 3;
+        //cursor_now += new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y")) * Time.deltaTime * 3;
 
+        cursor_now = (Input.mousePosition+ new Vector3(-1920/4, -1080/4, 0) )* cursor_max.x/1920*8;
+        //cursor_now.x -= 1920 / 2 * cursor_max.x;
+        //print(cursor_now + cursor_max);
         cursor_now.x = Mathf.Clamp(cursor_now.x, -cursor_max.x * 2, cursor_max.x * 2);
         cursor_now.y = Mathf.Clamp(cursor_now.y, -cursor_max.y*1, cursor_max.y*1);
         raypos = cam_target.transform.position + transform.right * cursor_now.x + transform.up * cursor_now.y;
@@ -172,37 +178,44 @@ public class player_code : MonoBehaviour
         }
         //interactions
         RaycastHit hit;
-       
 
-        if (Physics.Raycast(raytarg.transform.transform.position, -raytarg.transform.forward, out hit, 10)&& hit.transform.tag == "interact"&&stun_now<=0)
+        if (!dialogue_code.talking)
         {
-            cursor.transform.position = (hit.point + hit.transform.position*3)/4;
-            cursor.transform.localScale=Vector3.one/6;
-            cursor.GetComponent<Renderer>().material.SetColor("_EmissionColor", Color.yellow);
-            if (Input.GetButtonDown("Fire1")&&stun_now<=0)
+            if (Physics.Raycast(raytarg.transform.transform.position, -raytarg.transform.forward, out hit, 10) && hit.transform.tag == "interact" && stun_now <= 0)
             {
-                StartCoroutine(hit.transform.gameObject.GetComponent<interaction_code>().interact());
+                cursor.transform.position = (hit.point + hit.transform.position * 3) / 4;
+                cursor.transform.localScale = Vector3.one / 6;
+                cursor.GetComponent<Renderer>().material.SetColor("_EmissionColor", Color.yellow);
+                if (Input.GetButtonDown("Fire1") && stun_now <= 0&& hit.transform.gameObject.GetComponent<interaction_code>().click_cooldown<=0)
+                {
+                    StartCoroutine(hit.transform.gameObject.GetComponent<interaction_code>().interact());
+                }
+            }
+            else
+            {
+                cursor.transform.localScale = Vector3.one / 40;
+                cursor.GetComponent<Renderer>().material.SetColor("_EmissionColor", Color.white);
+
+                cursor.transform.position = raypos + transform.forward * 1f;
+                //throw
+                if (equip_now == equip_type.item && Input.GetButtonDown("Fire1"))
+                {
+                    equip_now = equip_type.none;
+                    equipment.GetComponent<Rigidbody>().linearVelocity = -raytarg.transform.forward * 5;
+                    equipment.GetComponent<Rigidbody>().angularVelocity = -raytarg.transform.right * 5;
+                    equipment.GetComponent<Rigidbody>().useGravity = true;
+                    equipment.GetComponent<Collider>().enabled = true;
+                    equipment.GetComponent<Collider>().isTrigger = false;
+
+                    equipment = null;
+                }
+                //place cursor   
             }
         }
         else
         {
-            cursor.transform.localScale = Vector3.one/40;
-            cursor.GetComponent<Renderer>().material.SetColor("_EmissionColor", Color.white);
-
-            cursor.transform.position = raypos + transform.forward * 1f;
-        //throw
-            if (equip_now==equip_type.item&&Input.GetButtonDown("Fire1"))
-            {
-                equip_now = equip_type.none;
-                equipment.GetComponent<Rigidbody>().linearVelocity = -raytarg.transform.forward*5;
-                equipment.GetComponent<Rigidbody>().angularVelocity = -raytarg.transform.right*5;
-                equipment.GetComponent<Rigidbody>().useGravity = true;
-                equipment.GetComponent<Collider>().enabled = true;
-                equipment.GetComponent<Collider>().isTrigger = false;
-
-                equipment = null;
-            }
-        } //place cursor   
+            cursor.transform.localScale = Vector3.one / 1000;
+        }
 
         
 
@@ -271,9 +284,9 @@ public class player_code : MonoBehaviour
         foreach (GameObject i in customers)
             {
 
-            if (t > 8) { Destroy(i); }  
+            //if (t > 8) { Destroy(i); }  
             i.GetComponent<interaction_code>().order = t; 
-            t++; 
+            t++;
             
             }
 
@@ -292,4 +305,18 @@ public class player_code : MonoBehaviour
 
     }
 
+    public IEnumerator randomizeCustomers()
+    {
+        yield return new WaitForSeconds(2.5f);
+        List<GameObject> bink = customers;
+        
+        foreach (GameObject i in customers)
+        {
+            bink.Append(i);
+            print(i);
+        }
+        //customers=bink;
+        //StartCoroutine(customerShuffle());
+        yield return null;
+    }
 }

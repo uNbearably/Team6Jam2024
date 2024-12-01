@@ -12,9 +12,12 @@ public class dialogue_code : MonoBehaviour
     public bool freeze_player = false;
     private int visible_characters = 0;
     private string to_type = "";
-    public AudioClip voice;
+    public AudioSource voice;
     public GameObject talker;
     private GameObject dialoguebox;
+    public bool zoom_cam = false;
+    public static bool talking = false;
+    private bool silent = false;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -32,7 +35,9 @@ public class dialogue_code : MonoBehaviour
     }
     public IEnumerator speak()
     {
-        dialoguebox.transform.position=Vector3.zero;
+        talking = true;
+        Camera cam = Camera.main;
+        dialoguebox.transform.localPosition=Vector3.zero;
         int line_max = global_words.Length;
         int line_now = 0;
         visible_characters = 0;
@@ -45,53 +50,65 @@ public class dialogue_code : MonoBehaviour
             {
                 visible_characters += 1;
                 float wobble = UnityEngine.Random.Range(0, .2f);
-                if (voice!=null) 
+                if (voice!=null&&!silent) 
                 { 
-                    GetComponent<AudioSource>().clip=voice; 
+                    //GetComponent<AudioSource>().clip=voice; 
                     GetComponent<AudioSource>().Play(); 
+                    print(voice);
+                    //voice.Play();
                 }
-                if (talker!=null) { talker.transform.localScale = new Vector3(1-wobble, 1+wobble, 1-wobble); }
+                if (talker!=null&& !silent) { talker.transform.localScale = new Vector3(1-wobble, 1+wobble, 1-wobble); }
 
                 yield return new WaitForSeconds(.0125f);
                 to_type = (global_words[line_now].Substring(0, Mathf.Clamp(visible_characters,0, global_words[line_now].Length)));
                 my_text.text = to_type;
 
                 //pauses in speech
-                if (visible_characters>1&&visible_characters< global_words[line_now].Length-1)
-                {string thischunk = global_words[line_now].Substring(visible_characters-1, 2);
-
+                if (visible_characters>0&&visible_characters< global_words[line_now].Length-1)
+                {string thischunk = global_words[line_now].Substring(visible_characters-1, 1);
+                    print(thischunk);
                     switch (thischunk)
                     {
-                        case "  ":
+                        case "(":
+                            silent = true; print(silent);  break;
+                        case ")":
+                            silent = false; print(silent); break;
+                        //case " ":
+                        //    yield return new WaitForSeconds(.01f);
+                        //    break;
+                        case ".":
                             yield return new WaitForSeconds(.01f);
                             break;
-                        case ". ":
+                        case "?":
                             yield return new WaitForSeconds(.02f);
                             break;
-                        case "? ":
-                            yield return new WaitForSeconds(.04f);
-                            break;
                     }
-}
+                }
                 if (freeze_player)
-                { GameObject.Find("Player").GetComponent<player_code>().stun_now = .1f; }
+                { GameObject.Find("Player").GetComponent<player_code>().stun_now = .3f; }
             }
-            yield return new WaitForSeconds(.05f);
+            yield return new WaitForSeconds(.025f);
 
             while (!Input.GetButton("Fire1")) 
             { 
                 if (freeze_player)
-                { GameObject.Find("Player").GetComponent<player_code>().stun_now = .1f; }
+                { GameObject.Find("Player").GetComponent<player_code>().stun_now = .2f; }
                 yield return new WaitForFixedUpdate();
                 
             }
             visible_characters = 0;
             line_now += 1;
+            if (zoom_cam) { cam.fieldOfView -= 15; }
         }
         my_text.text = "";
         talker = null;
         voice = null;
-        while (voice == null) { yield return new WaitForSeconds(.01f); dialoguebox.transform.position -= Vector3.up*.01f; }
+        talking = false;
+        cam.fieldOfView = 60;
+        //lower dialouge box
+        while (!talking) { yield return new WaitForSeconds(.01f); dialoguebox.transform.position -= Vector3.up*.1f; }
+        
         yield return null;
+        
     }
 }
